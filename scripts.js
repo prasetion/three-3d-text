@@ -1,27 +1,10 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
-import typeFaceFont from "./fonts/helvetiker_regular.typeface.json";
 import { FontLoader } from "three/examples/jsm/Addons.js";
-
-// import GUI from "lil-gui";
-// import gsap from "gsap";
-// import doorColorImage from "./textures/door/color.jpg";
-// import doorAlphaImage from "./textures/door/alpha.jpg";
-// import doorHeightImage from "./textures/door/height.jpg";
-// import doorNormalImage from "./textures/door/normal.jpg";
-// import doorAmbientOcclusionImage from "./textures/door/ambientOcclusion.jpg";
-// import doorMetalnessImage from "./textures/door/metalness.jpg";
-// import doorRoughnessImage from "./textures/door/roughness.jpg";
-// import minecraftImage from "./textures/minecraft.png";
-// import matCapImage from "./textures/matcaps/5.png";
-// import gradientImage from "./textures/gradients/5.jpg";
-// import { RGBELoader } from "three/examples/jsm/loaders/RGBELoader.js";
+import { TextGeometry } from "three/examples/jsm/Addons.js";
 
 // canvas
 const canvas = document.querySelector("canvas.webgl");
-
-// debug
-const gui = new GUI();
 
 // cursor
 const cursor = {
@@ -39,7 +22,68 @@ window.addEventListener("mousemove", (event) => {
 const scene = new THREE.Scene();
 
 // fonts
-const fontLoader = new THREE.FontLoader();
+const fontLoader = new FontLoader();
+fontLoader.load(
+  "./fonts/helvetiker_regular.typeface.json",
+  (data) => {
+    console.log(data, "font loaded");
+    const textGeometry = new TextGeometry("Hello World", {
+      font: data,
+      size: 0.5,
+      depth: 0.2,
+      curveSegments: 12,
+      bevelEnabled: true,
+      bevelThickness: 0.03,
+      bevelSize: 0.02,
+      bevelOffset: 0,
+      bevelSegments: 5,
+    });
+
+    // textGeometry.computeBoundingBox();
+    // textGeometry.translate(
+    //   -(textGeometry.boundingBox.max.x - 0.02) * 0.5, // Subtract bevel size
+    //   -(textGeometry.boundingBox.max.y - 0.02) * 0.5, // Subtract bevel size
+    //   -(textGeometry.boundingBox.max.z - 0.03) * 0.5 // Subtract bevel thickness
+    // );
+
+    // center
+    textGeometry.center();
+
+    // texture
+    const textureLoader = new THREE.TextureLoader();
+    const matcapTexture = textureLoader.load("./textures/matcaps/1.png");
+    matcapTexture.colorSpace = THREE.SRGBColorSpace;
+
+    // material
+    const textMat = new THREE.MeshMatcapMaterial({ matcap: matcapTexture });
+    const text = new THREE.Mesh(textGeometry, textMat);
+    scene.add(text);
+
+    const donutGeometry = new THREE.TorusGeometry(0.3, 0.2, 20, 45);
+
+    // add object
+    for (let i = 0; i < 100; i++) {
+      const donut = new THREE.Mesh(donutGeometry, textMat);
+
+      // random pos
+      donut.position.x = (Math.random() - 0.5) * 10;
+      donut.position.y = (Math.random() - 0.5) * 10;
+      donut.position.z = (Math.random() - 0.5) * 10;
+
+      // random rotation
+      donut.rotation.x = Math.random() * Math.PI;
+      donut.rotation.y = Math.random() * Math.PI;
+
+      // random scale
+      const scale = Math.random();
+      donut.scale.set(scale, scale, scale);
+
+      scene.add(donut);
+    }
+  },
+  (e) => console.log(e),
+  (err) => console.log(err)
+);
 
 // sizes
 const sizes = {
