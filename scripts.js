@@ -24,7 +24,7 @@ const scene = new THREE.Scene();
 // fonts
 const fontLoader = new FontLoader();
 fontLoader.load(
-  "./fonts/helvetiker_regular.typeface.json",
+  "/fonts/helvetiker_regular.typeface.json",
   (data) => {
     console.log(data, "font loaded");
     const textGeometry = new TextGeometry("Hello World", {
@@ -51,7 +51,7 @@ fontLoader.load(
 
     // texture
     const textureLoader = new THREE.TextureLoader();
-    const matcapTexture = textureLoader.load("./textures/matcaps/1.png");
+    const matcapTexture = textureLoader.load("/textures/matcaps/1.png");
     matcapTexture.colorSpace = THREE.SRGBColorSpace;
 
     // material
